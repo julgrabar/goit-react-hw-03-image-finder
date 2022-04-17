@@ -6,6 +6,7 @@ import { getImages } from 'services/api';
 import { mapper } from 'utils/mapper';
 import { Button } from 'components/Button/Button';
 import { Loader } from './Loader/Loader';
+import { NoResult } from './NoResult.styled';
 
 export class App extends Component {
   state = {
@@ -13,6 +14,7 @@ export class App extends Component {
     images: [],
     page: 1,
     isLoading: false,
+    totalResults: 0,
   };
 
   async componentDidUpdate(_, prevState) {
@@ -24,11 +26,15 @@ export class App extends Component {
         });
 
         const images = await getImages(searchValue, page);
+        const { totalHits, hits } = images;
         this.setState(prev => ({
-          images: [...prev.images, ...mapper(images.data.hits)],
+          images: [...prev.images, ...mapper(hits)],
+          totalResults: totalHits === 0 ? -1 : totalHits,
         }));
       } catch (error) {
-        console.log(error);
+        alert(
+          'Упс.. Что-то пошло не так.. Перезагрузите страницу или ввидите другой поисковый запрос.'
+        );
       } finally {
         this.setState({
           isLoading: false,
@@ -52,7 +58,7 @@ export class App extends Component {
   };
 
   render() {
-    const { isLoading, images } = this.state;
+    const { isLoading, images, totalResults } = this.state;
 
     return (
       <div className="App">
@@ -61,8 +67,17 @@ export class App extends Component {
         <SearchBar onSubmit={this.onSubmit} />
         <ImageGallery images={images} />
         {isLoading && <Loader />}
-        {images.length >= 12 && isLoading === false && (
+        {images.length < totalResults && isLoading === false && (
           <Button onBtn={this.onNextPage} />
+        )}
+        {totalResults === -1 && (
+          <NoResult>
+            <span>There is no result</span>
+            <img
+              src="https://thumbs.gfycat.com/InfiniteUnlawfulKinglet-size_restricted.gif"
+              alt="not found"
+            />
+          </NoResult>
         )}
       </div>
     );
