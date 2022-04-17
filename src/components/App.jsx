@@ -70,7 +70,7 @@ export class App extends Component {
         {images.length < totalResults && isLoading === false && (
           <Button onBtn={this.onNextPage} />
         )}
-        {totalResults === -1 && (
+        {totalResults === -1 && isLoading === false && (
           <NoResult>
             <span>There is no result</span>
             <img
