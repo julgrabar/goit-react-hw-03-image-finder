@@ -7,6 +7,7 @@ import { mapper } from 'utils/mapper';
 import { Button } from 'components/Button/Button';
 import { Loader } from './Loader/Loader';
 import { NoResult } from './NoResult.styled';
+import { Modal } from './Modal/Modal';
 
 export class App extends Component {
   state = {
@@ -15,6 +16,8 @@ export class App extends Component {
     page: 1,
     isLoading: false,
     totalResults: 0,
+    isModalOpen: false,
+    modalImage: null,
   };
 
   async componentDidUpdate(_, prevState) {
@@ -57,18 +60,40 @@ export class App extends Component {
     }));
   };
 
+  onImgClick = () => {
+    this.setState(prev => ({
+      isModalOpen: !prev.isModalOpen,
+    }));
+  };
+
+  setModalImage = image => {
+    this.setState({
+      modalImage: image,
+    });
+  };
+
   render() {
-    const { isLoading, images, totalResults } = this.state;
+    const { isLoading, images, totalResults, isModalOpen, modalImage } =
+      this.state;
 
     return (
       <div className="App">
         <Global />
 
         <SearchBar onSubmit={this.onSubmit} />
-        <ImageGallery images={images} />
+        {images.length > 0 && (
+          <ImageGallery
+            images={images}
+            onImgClick={this.onImgClick}
+            setImage={this.setModalImage}
+          />
+        )}
         {isLoading && <Loader />}
         {images.length < totalResults && isLoading === false && (
           <Button onBtn={this.onNextPage} />
+        )}
+        {isModalOpen && (
+          <Modal modalImg={modalImage} onClose={this.onImgClick} />
         )}
         {totalResults === -1 && isLoading === false && (
           <NoResult>

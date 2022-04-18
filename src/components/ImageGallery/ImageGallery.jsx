@@ -2,7 +2,7 @@ import propTypes from 'prop-types';
 import { List } from './ImageGallery.styled';
 import { ImageGalleryItem } from './ImageGalleryItem';
 
-export const ImageGallery = ({ images }) => {
+export const ImageGallery = ({ images, onImgClick, setImage }) => {
   return (
     <>
       <List>
@@ -12,6 +12,8 @@ export const ImageGallery = ({ images }) => {
             webformatURL={webformatURL}
             tags={tags}
             modalImg={largeImageURL}
+            onImgClick={onImgClick}
+            setImage={setImage}
           />
         ))}
       </List>
@@ -28,4 +30,6 @@ ImageGallery.propTypes = {
       tags: propTypes.string.isRequired,
     })
   ).isRequired,
+  onImgClick: propTypes.func.isRequired,
+  setImage: propTypes.func.isRequired,
 };

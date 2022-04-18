@@ -5,32 +5,26 @@ import { Overlay } from './Modal.styled';
 
 export class Modal extends Component {
   componentDidMount() {
-    window.addEventListener('keydown', this.handleKeyDown);
+    window.addEventListener('keydown', this.closeModal);
   }
 
   componentWillUnmount() {
-    window.removeEventListener('keydown', this.handleKeyDown);
+    window.removeEventListener('keydown', this.closeModal);
   }
 
-  handleKeyDown = e => {
-    if (e.code === 'Escape') {
-      this.props.onClose();
-    }
-  };
-
-  onBackDropClick = e => {
-    if (e.target === e.currentTarget) {
+  closeModal = e => {
+    if (e.code === 'Escape' || e.target === e.currentTarget) {
       this.props.onClose();
     }
   };
 
   render() {
-    const { modalImg, tags } = this.props;
+    const { modalImg } = this.props;
 
     return createPortal(
-      <Overlay onClick={this.onBackDropClick}>
+      <Overlay onClick={this.closeModal}>
         <div className="modal">
-          <img src={modalImg} alt={tags} />
+          <img src={modalImg} alt="#" />
         </div>
       </Overlay>,
       document.getElementById('modal-root')
@@ -40,5 +34,4 @@ export class Modal extends Component {
 
 Modal.propTypes = {
   modalImg: PropTypes.string.isRequired,
-  tags: PropTypes.string.isRequired,
 };
